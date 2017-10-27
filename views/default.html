@@ -1,0 +1,186 @@
+<!doctype html>
+
+<html>
+<head>
+
+    <title>
+        <?php if ( isset( $data['view_data']['article_page']['title']) ) {
+                echo $data['view_data']['article_page']['title'];
+             } else {
+                  echo Config::get('site_name');
+             } ?>
+    </title>
+
+    <meta charset="utf-8">
+
+    <link rel="shortcut icon" href="/img/favicon.gif" type="image/gif">
+
+    <link rel="stylesheet" href="/lib/bootstrap-3.3.2-dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/lib/bootstrap-3.3.2-dist/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/style_bg_head.css">
+    <link rel="stylesheet" href="/css/style_bg_page.css">
+
+    <script src="/js/jquery.min.js"></script>
+    <script src="/lib/bootstrap-3.3.2-dist/js/bootstrap.min.js"></script>
+    <script src="/js/user.js"></script>
+
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+
+
+</head>
+
+
+<body class="bg_page"   >
+
+<nav id="top_menu_user" class="bg_head navbar navbar-inverse navbar-fixed-top" >
+    <div class="container ">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="/home/"><?= Config::get('site_name') ?></a>
+        </div>
+        <div id="navbar" class="collapse navbar-collapse">
+            <ul class="nav navbar-nav">
+                <li
+                <?php if (App::getRouter()->getController() == 'home') {?>class="active"<?php } ?>><a href="/home/">Главная</a></li>
+
+                <li
+                <?php if (App::getRouter()->getController() == 'contacts') {?>class="active"<?php } ?>><a
+                    href="/contacts/">Обратная связь</a></li>
+
+
+                <?php if ( Session::get('login') ) { ?>
+                <li><a href="/users/logout">Выход (<?= Session::get('login') ?>)</a></li>
+                <?php } else { ?>
+                <li
+                <?php if ( App::getRouter()->getController() == 'users' && App::getRouter()->getAction() == 'register' )
+                {?>class="active"<?php } ?> >
+                <a href="/users/register">Регистрация</a></li>
+                <li
+                <?php if ( App::getRouter()->getController() == 'users' && App::getRouter()->getAction() == 'login' )
+                {?>class="active"<?php } ?> >
+                <a href="/users/login">Вход</a></li>
+                <?php } ?>
+
+
+                <li  id="search_label">
+                    <a href="" >
+                        Поиск:
+                    </a>
+
+                </li>
+                <li id="search_inp_block" >
+                    <input type="text" id="search_inp_text" value="">
+                        <span id="search_list"  style="">
+                        </span>
+                </li>
+
+                <script>
+                    $(document).ready(function () {
+                        $block = $('#search_inp_block');
+                        $list = $('#search_list');
+                        $inp = $('#search_inp_text');
+
+                        $block.on('mouseleave', function() {
+                            timeId = setTimeout(function () {
+                                $list.hide(200);
+                            }, 50);
+                        })
+                        $block.on('mouseenter', function() {
+                            timeId2 = setTimeout(function () {
+                                if ($list.find('.search_item').first().text() != '') {
+                                    $list.show(200);
+                                }
+                            }, 50);
+                        })
+
+                        $inp.on('keyup', function () {
+                            var text = $inp.val();
+                            text = text.trim();
+                            if (text == '') {
+                                $list.hide(200);
+                                return;
+                            }
+                            var uri = '/articles/search_ajax/' + text + '/';
+                            myAjax(uri, text, searchReturn, searchReturnErr);
+                        })
+
+                        function searchReturn(data) {
+
+                            data = JSON.parse(data);
+                            $list = $('#search_list');
+
+                            var str = '';
+
+                            if ( data['tags'].length > 0 ) {
+                                tags_count = data['tags'].length;
+                                str = '<div class="search_titles"><b> Теги: </b></div>';
+
+                                for (j = 0; j < tags_count  && j < data['max_count']; j++) {
+                                    str = str + '<a href="/articles/filter/?tags[]=' + data['tags'][j] + '" class="search_item">' + data['tags'][j] + '</a>';
+                                }
+                            }
+                            if ( data['articles'].length > 0 ) {
+                                articles_count = data['articles'].length;
+                                str = str + '<div class="search_titles"><b> Заголовки: </b></div>';
+
+                                for (i = 0; i < articles_count && i < data['max_count']; i++) {
+                                    str = str + '<a href="/article_page/view/' + data['articles'][i]['id'] + '/"  class="search_item">' + data['articles'][i]['title'] + '</a>';
+                                }
+                            }
+
+                            if ( str.length > 0 ) {
+                                 $list.html(str);
+                                 $list.show(200);
+                            } else {
+                                $list.html('');
+                                $list.hide(200);
+                            }
+                        }
+                        function searchReturnErr() {
+                            alert('Error Ajax');
+                        }
+                    })
+                </script>
+
+
+
+
+            </ul>
+        </div><!--/.nav-collapse -->
+    </div>
+</nav>
+
+
+
+<div class="container main-container">
+
+    <div class="top_line_logo" >
+            <a class="" href="/home/"><?= Config::get('site_name') ?></a>
+    </div>
+
+    <?php if ( Session::hasflash()) { ?>
+    <div class="alert alert-info" role="alert">
+        <?php Session::flash(); ?>
+    </div>
+    <?php } ?>
+
+
+
+    <div class="main-section starter-template">
+        <?=$data['content']?>
+    </div>
+
+
+</div>
+
+<div id="footer">
+    <div class="container">
+        <p class="text-muted">&copy; 2017 My site</p>
+    </div>
+</div>
+
+</body>
+</html>

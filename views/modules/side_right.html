@@ -1,0 +1,73 @@
+
+
+
+
+        <div style="text-align: center;padding: 10px; font-size: 21px;"><b>ТОП-новости</b></div>
+
+        <div id="tabs" class="top_news" style="width: 100%; font-size: 0.9em;">
+            <ul>
+                <li><a href="#tabs-1" style="padding: 2px 4px;">за день</a></li>
+                <li><a href="#tabs-2" style="padding: 2px 4px;">неделю</a></li>
+                <li><a href="#tabs-3" style="padding: 2px 4px;">месяц</a></li>
+                <li><a href="#tabs-4" style="padding: 2px 4px;">все время</a></li>
+            </ul>
+
+            <div id="tabs-1">
+                <div class="articles_list__block">
+                    <?php  if ( isset($data['top_day']['articles']) && is_array($data['top_day']['articles']) ) {
+
+                    foreach( $data['top_day']['articles'] as $art ) { ?>
+                    <div class="article_list__row">
+                        <span class="article_list__title" ><a href="/article_page/view/<?= $art['art_id'] ?>" > <?= $art['art_title'] ?> </a></span>
+                    </div>
+                    <?php }  } ?>
+                </div>
+            </div>
+
+
+            <div id="tabs-2">
+                <div class="articles_list__block">
+                    <?php  if ($data['top_week']['articles']) {
+
+                    foreach( $data['top_week']['articles'] as $art ) { ?>
+                    <div class="article_list__row">
+                        <span class="article_list__title" ><a href="/article_page/view/<?= $art['art_id'] ?>" > <?= $art['art_title'] ?> </a></span>
+                    </div>
+                    <?php }  } ?>
+                </div>
+            </div>
+
+
+            <div id="tabs-3">
+                <div class="articles_list__block">
+                    <?php  if ($data['top_month']['articles']) {
+
+                    foreach( $data['top_month']['articles'] as $art ) { ?>
+                    <div class="article_list__row">
+                        <span class="article_list__title" ><a href="/article_page/view/<?= $art['art_id'] ?>" > <?= $art['art_title'] ?> </a></span>
+                    </div>
+                    <?php }  } ?>
+                </div>
+            </div>
+
+            <div id="tabs-4">
+                <div class="articles_list__block">
+                    <?php  if ($data['top_all']['articles']) {
+
+                    foreach( $data['top_all']['articles'] as $art ) { ?>
+                    <div class="article_list__row">
+                        <span class="article_list__title" ><a href="/article_page/view/<?= $art['art_id'] ?>" > <?= $art['art_title'] ?> </a></span>
+                    </div>
+                    <?php }  } ?>
+                </div>
+            </div>
+
+
+        </div>
+
+
+    <script>
+        $( function() {
+            $( "#tabs" ).tabs();
+        } );
+    </script>

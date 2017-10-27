@@ -1,0 +1,24 @@
+<div class="side_wrap left">
+    <?= $data['module_side_left'] ?>
+</div>
+
+<div class="main_content">
+    <?php  ?>
+    <?php if ( isset($data['selected_categ']) && $data['selected_categ'] != '' ) { ?>
+        <h3> <?= $data['selected_categ'] ?> </h3>
+    <?php } else { ?>
+        <h1> Список новостей </h1>
+    <?php } ?>
+
+    <hr>
+
+    <?= $data['module_articles_list'] ?>
+
+</div>
+
+
+<div class="side_wrap right">
+    <?= $data['module_side_right'] ?>
+</div>
+
+

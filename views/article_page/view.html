@@ -1,0 +1,359 @@
+<div class="side_wrap left">
+    <?= $data['module_side_left'] ?>
+</div>
+
+<div class="main_content">
+
+<?php if ($data['article_page']) { ?>
+
+    <h1><?=$data['article_page']['title'] ?></h1><br/>
+
+
+    <?php if ($data['article_page']['date_published']) { ?>
+        <span><?= my_format_date( $data['article_page']['date_published'] ) ?></span>
+    <?php }  ?>
+    &nbsp;&nbsp;&nbsp;
+    <?php if ($data['article_page']['author']) {  ?>
+        <b>Автор : </b>
+    <?php }  ?>
+
+    <?php if ($data['article_page']['author']) {echo $data['article_page']['author'];} ?>
+    &nbsp;&nbsp;
+
+    &nbsp;&nbsp; <br>
+    <span id="visited">Просмотров: <?= $data['article_page']['visited'] ?></span></b>
+    <?php if (Session::get('role') === 'admin') {  ?>
+        <i>(просмотры администратора сайта не учитываются)</i>
+    <?php }  ?>
+
+    <hr>
+    <div id="article_text_wrap" >
+        <?php if ($data['article_page']['text']) echo  $data['article_page']['text']; ?>
+    </div>
+
+    <br/>
+
+
+    <p>
+        <b>Теги: </b>
+        <?php
+                if ( $data['article_page']['tags']) {
+                    foreach( $data['article_page']['tags'] as $tag){
+                        echo ' <b><a href="/articles/filter/?tags[]=' . $tag . '" >' . $tag . ' </a></b> &nbsp;' ;
+                }
+            }
+        ?>
+    </p>
+
+
+
+
+
+    <hr>
+    <h4>Комментарии</h4>
+    <hr>
+
+    <?php if (Session::get('role') != 'admin') {  ?>
+        <div class="window_message_for_user"  style=" display: none; position: fixed; left: 30%; top: 40%; width: 400px; padding: 30px; background-color: #fff; text-align: left; border-radius: 10px ;border:1px solid #aaa; ">
+            <p style="color: #000;">Ваше сообщение появится после проверки модератором.</p>
+            <button class="message_close_window  btn btn-sm btn-default">Закрыть</button>
+        </div>
+    <?php  } ?>
+
+    <div id="comments" style="padding: 5px 20px; ">
+
+        <?php if (Session::get('role') === 'admin') {  ?>
+        <p style="border: 7px solid #f55 ; text-align: center; "> Непроверенные (неопубликованные) комментарии выделены красной рамкой </p>
+        <?php  }  ?>
+
+        <div id="0"  class="comment" >
+            <?php if (Session::get('role')) {  ?>
+            <p>Вы можете оставить свой комментарий:</p>
+            <textarea name="comm_input" class="comm_input"  style="display: block; width: 100%; padding:10px; margin: 5px 0px 0px 0px;"></textarea>
+            <span class="comm_send_btn btn btn-sm btn-default" onclick=""  style="display:inline-block; ;">Отправить</span>
+
+            <?php  } else { ?>
+            <p>Комментарии могут оставлять только зарегистрированные пользователи.</p>
+            <?php  }  ?>
+
+        </div>
+
+
+
+        <div id="comment_base" data_parent_id=""  class="comment"  align="left"
+        style="padding: 10px 0px 10px 0px ; display: none; ">
+
+            <b><span class="comm_login" style="margin: 0px 10px;">  </span></b>
+            <span class="comm_date"  style="margin: 0px 10px;">  </span>
+
+            <?php  if (Session::get('role')) {  ?>
+            <!--<span class="comm_like_btn  btn btn-sm btn-default"   style="margin: 0px 5px;"><b> + </b></span>-->
+                <img src="/webroot/img/icons/thumb_up.png" alt="" class="comm_like_btn  btn btn-sm "   style="margin: 0px 0px 0px 5px;" >
+            <?php  } else { ?>
+                 <img src="/webroot/img/icons/thumb_up.png" alt="" class=""   style="margin: 0px 0px 0px 5px;" >
+            <?php  }  ?>
+
+            <span class="comm_like_count"  style="margin: 0px 20px 0px 0px;">  </span>
+
+            <!--<span class="id_parent" >  </span>-->
+            <!--<span class="id" >  </span>-->
+
+            <div name="" class="comm_text"  style="width: 100%; background-color: #fff; border: 1px solid #aaa; padding:10px;">   </div>
+
+            <?php if (Session::get('role')) {  ?>
+                    <textarea name="comm_input" class="comm_input"  style="display: none; width: calc(100% - 30px); padding:10px; margin: 5px 0px 0px 30px;"></textarea>
+
+                    <span class="comm_send_btn btn btn-sm btn-default" onclick=""  style="display: none; margin-left: 30px;">Сохранить</span>
+                    <span class="comm_cancel_btn btn btn-sm btn-default" onclick=""  style="display: none;">Отмена</span>
+                    <span class="comm_reply_btn btn btn-sm btn-default" onclick="" style="display: inline-block;">Ответить</span>
+
+                  <?php if (Session::get('role') == 'admin') {  ?>
+                        <span class="comm_edit_btn btn btn-sm btn-default" onclick="" style="display: inline-block;">Редактировать</span>
+                        <span class="comm_publish_btn btn btn-sm btn-default" onclick="" style="display: none;">Опубликовать</span>
+                        <span class="comm_hide_btn btn btn-sm btn-default" onclick="" style="display: inline-block;">Скрыть</span>
+                        <span class="comm_delete_btn btn btn-sm btn-default" onclick="return confirm('Вы уверены, что хотите удалить этот комментарий и все дочерние комментарии?');" style="display: inline-block;">Удалить</span>
+
+                   <?php  } ?>
+            <?php  } ?>
+
+
+        </div>
+
+
+        <div    id="user_id"  data_user_id="<?= $data['user']['id'] ?>" style="display: none;" ></div>
+        <div    id="user_login"  data_user_login="<?= $data['user']['login'] ?>" style="display: none;" ></div>
+        <div    id="article_id"  data_article_id="<?= $data['article_page']['id'] ?>" style="display: none;" ></div>
+
+
+    </div>
+
+<?php } else {?>
+    <p>Такой страницы не существует</p>
+<?php } ?>
+
+
+</div>
+
+
+<div class="side_wrap right">
+    <?= $data['module_side_right'] ?>
+</div>
+
+
+
+
+
+
+<script>
+
+    document.addEventListener("DOMContentLoaded", commentsGet);
+
+    function commentsGet() {
+
+        $comments_wrapp = $('#comments');
+        $comment_base_element = $('#comment_base');
+
+        var user_id = $('#user_id').attr('data_user_id');
+        var article_id = $('#article_id').attr('data_article_id');
+        if (article_id) {
+            var data = {};
+            var uri = '/article_page/comments_get_ajax/' + article_id + '/';
+            myAjax(uri, data, commentsReturn, commentsReturnErr);
+        }
+
+        function commentsReturn(data) {
+
+            if (data) {
+                $('div[data_base_element="no_base_element"]').remove();
+
+                var comments = JSON.parse(data);
+                var commLength = comments.length;
+
+                for (i = 0; i < commLength; i++) {
+
+                    $row = comments[i];
+
+                    $comm_clone = $comment_base_element.clone();
+
+                    $comm_clone.attr('data_base_element', 'no_base_element');
+                    $comm_clone.css('display', 'block');
+                    $comm_clone.css('padding-left', 30 * $row['nested_level'] + 'px');
+                    $comm_clone.attr('id', $row['id_comment']);
+                    $comm_clone.attr('data_parent_id', $row['id_parent_comment']);
+                    $comm_clone.find('.comm_login').text($row['login']);
+                    $comm_clone.find('.comm_date').text($row['date']);
+                    $comm_clone.find('.comm_like_count').text($row['like_count']);
+                    $comm_clone.find('.comm_text').text($row['text']);
+
+                    if ( $row['is_published'] === '0' ) {
+                        $comm_clone.find('.comm_text').css('border', '7px solid #f55');
+                        $comm_clone.find('.comm_publish_btn').css('display', 'inline-block');
+                        $comm_clone.find('.comm_hide_btn').css('display', 'none');
+                    }
+
+                    $comments_wrapp.append($comm_clone);
+                }
+            }
+
+            $('.comment .comm_like_btn').on('click', function () {
+                $this_div = $(this).parent();
+                var id = $this_div.attr('id');
+
+                var data = {};
+                var uri = '/article_page/comment_like_ajax/' + id + '/' + user_id + '/';
+                myAjax(uri, data, commentLike, commentsReturnErr);
+
+                function commentLike(data){
+                    var like_count = $this_div.find('.comm_like_count').text();
+                    like_count = parseInt(like_count);
+                    if (data == 1) {
+                        $this_div.find('.comm_like_count').text( like_count + 1 );
+                    }
+                }
+            });
+
+            $('.comment .comm_send_btn').on('click', function () {
+
+
+                $('.window_message_for_user').css('display', 'block');
+
+                $('.message_close_window').on('click', function () {
+                    $('.window_message_for_user').css('display', 'none');
+                });
+
+
+                $this_div = $(this).parent();
+                var id = $this_div.attr('id');
+                var text = $this_div.find('.comm_input').val();
+                $this_div.find('.comm_input').val('');
+                text = text.trim();
+
+                if (text != '') {
+                    var is_edit = $this_div.find('.comm_input').attr('data_comm_edit');
+                    var data;
+                    var uri;
+
+                    if (is_edit == 'on') {
+                        data = {
+                            'text': text,
+                            'id_comment': id,
+                            'id_user': user_id,
+                            'id_article': article_id
+                        };
+
+                        uri = '/admin/article_page/comment_edit_ajax/' + article_id + '/';
+
+                    } else {
+                        data = {
+                            'text': text,
+                            'id_comment': id,
+                            'id_user': user_id,
+                            'id_article': article_id
+                        };
+
+                        uri = '/article_page/comment_add_ajax/' + article_id + '/';
+                    }
+
+                    myAjax(uri, data, commentsReturn, commentsReturnErr);
+                }
+
+            });
+
+            $('.comment .comm_reply_btn').on('click', function () {
+                $this_div = $(this).parent();
+                $this_div.find('.comm_input').css('display', 'block');
+                $this_div.find('.comm_send_btn').css('display', 'inline-block');
+                $this_div.find('.comm_cancel_btn').css('display', 'inline-block');
+                $this_div.find('.comm_reply_btn').css('display', 'none');
+                $this_div.find('.comm_edit_btn').css('transform', 'scale(0)');
+                $this_div.find('.comm_publish_btn').css('transform', 'scale(0)');
+                $this_div.find('.comm_hide_btn').css('transform', 'scale(0)');
+                $this_div.find('.comm_delete_btn').css('transform', 'scale(0)');
+            });
+
+            $('.comment .comm_edit_btn').on('click', function () {
+                $this_div = $(this).parent();
+                var text = $this_div.find('.comm_text').text();
+                $this_div.find('.comm_input').val(text);
+                $this_div.find('.comm_input').attr('data_comm_edit', 'on');
+                $this_div.find('.comm_input').css('display', 'block');
+                $this_div.find('.comm_send_btn').css('display', 'inline-block');
+                $this_div.find('.comm_cancel_btn').css('display', 'inline-block');
+                $this_div.find('.comm_reply_btn').css('display', 'none');
+                $this_div.find('.comm_edit_btn').css('transform', 'scale(0)');
+                $this_div.find('.comm_publish_btn').css('transform', 'scale(0)');
+                $this_div.find('.comm_hide_btn').css('transform', 'scale(0)');
+                $this_div.find('.comm_delete_btn').css('transform', 'scale(0)');
+            });
+
+            $('.comment .comm_cancel_btn').on('click', function () {
+                $this_div = $(this).parent();
+                $this_div.find('.comm_input').val('');
+                $this_div.find('.comm_input').attr('data_comm_edit', 'off');
+                $this_div.find('.comm_input').css('display', 'none');
+                $this_div.find('.comm_send_btn').css('display', 'none');
+                $this_div.find('.comm_cancel_btn').css('display', 'none');
+                $this_div.find('.comm_reply_btn').css('display', 'inline-block');
+                $this_div.find('.comm_edit_btn').css('transform', 'scale(1)');
+                $this_div.find('.comm_publish_btn').css('transform', 'scale(1)');
+                $this_div.find('.comm_hide_btn').css('transform', 'scale(1)');
+                $this_div.find('.comm_delete_btn').css('transform', 'scale(1)');
+            });
+
+            $('.comment .comm_publish_btn').on('click', function () {
+                $this_div = $(this).parent();
+                var id = $this_div.attr('id');
+
+                var data = {};
+                var uri = '/admin/article_page/comment_publish_ajax/' + article_id + '/' + id + '/' ;
+                myAjax(uri, data, commentsReturn, commentsReturnErr);
+            });
+
+            $('.comment .comm_hide_btn').on('click', function () {
+                $this_div = $(this).parent();
+                var id = $this_div.attr('id');
+
+                var data = {};
+                var uri = '/admin/article_page/comment_hide_ajax/' + article_id + '/' + id + '/' ;
+                myAjax(uri, data, commentsReturn, commentsReturnErr);
+            });
+
+            $('.comment .comm_delete_btn').on('click', function () {
+                $this_div = $(this).parent();
+                var id = $this_div.attr('id');
+
+                var data = {};
+                var uri = '/admin/article_page/comment_delete_ajax/' + article_id + '/' + id + '/' ;
+                myAjax(uri, data, commentsReturn, commentsReturnErr);
+            });
+
+        }
+
+        function commentsReturnErr() {
+            alert('Error');
+        }
+
+    }
+
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,41 @@
+<h1>Редактировать фон</h1><br/>
+
+<form method="post" action="" enctype="multipart/form-data"   style="width: 900px;">
+
+    <input type="submit" name="bg" class="btn btn-success" value="Сохранить"  style="width: 100px;" />
+
+    <br/><br/>
+
+    <table class="table table-default" style="width: 100%;background: #fff; ">
+        <tr style="font-weight: bolder; ">
+            <td style="width: 10%;">Секция страницы</td>
+            <td style="width: 25%;">Цвет фона<p>(вначале удалить изображение)</p></td>
+            <td style="width: 20%;">Изображение фона</td>
+            <td style="width: 25%;">Добавить/Заменить изображение фона</td>
+            <td style="width: 10%;">Удалить изображение</td>
+        </tr>
+        <tr>
+            <td>Head</td>
+            <td><input type="text"  name="<?= $data['bg_head'] . '_color' ?>" value="<?= $data['bg_head_color'] ?>" size="20" class="form-control" placeholder="#000077" /></td>
+            <td><img src="/webroot/img/background/<?= $data['bg_head'] ?>" alt="" style="width: 100px;"></td>
+            <td align="left">
+                <input type="file" name="<?= $data['bg_head'] ?>" accept="image/*"/>
+            </td>
+            <td align="left">
+                <a href="/admin/backgrounds/delete/<?= $data['bg_head'] ?>/"  class="btn btn-success" >Удалить</a>
+            </td>
+        </tr>
+        <tr>
+            <td>Page</td>
+            <td><input type="text"  name="<?= $data['bg_page'] . '_color' ?>" value="<?= $data['bg_page_color'] ?>"  size="20" class="form-control" placeholder="#ffffcc" /></td>
+            <td><img src="/webroot/img/background/<?= $data['bg_page'] ?>" alt="" style="width: 100px;"></td>
+            <td align="left">
+                <input type="file" name="<?= $data['bg_page'] ?>" accept="image/*"/>
+            </td>
+            <td align="left">
+                <a href="/admin/backgrounds/delete/<?= $data['bg_page'] ?>/"  class="btn btn-success" >Удалить</a>
+            </td>
+        </tr>
+    </table>
+
+</form>

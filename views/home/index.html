@@ -1,0 +1,70 @@
+<div class="side_wrap left">
+    <?= $data['module_side_left'] ?>
+</div>
+
+<div class="main_content">
+
+    <?php if ($data['images']) { ?>
+
+        <div id="myCarousel" class="slider__list carousel slide" data-ride="carousel"  >
+            <?php $count = count($data['images']); ?>
+            <ol class="carousel-indicators">
+                <?php for($i = 0; $i < $count; $i++) { ?>
+                <li data-target="#myCarousel" data-slide-to="<?= $i ?>" <?php if ($i == 0) {echo ' class="active" ' ;}; ?>  ></li>
+                <?php } ?>
+            </ol>
+
+            <div class="carousel-inner" >
+
+                <?php for($i = 0; $i < $count; $i++) { ?>
+                    <div class="slider__item item <?php if ($i == 0) { echo 'active'; }; ?>  "   style="">
+                        <img class="slider__img"  src="/webroot/img/articles/<?= $data['images'][$i]['img'] ?>" alt="">
+                        <div class="container">
+                            <div class="carousel-caption">
+                                <p><a  href="/article_page/view/<?= $data['images'][$i]['article']['art_id'] ?>/"><?= $data['images'][$i]['article']['art_title'] ?></a></p>
+                            </div>
+                        </div>
+                    </div>
+                <?php } ?>
+
+            </div>
+
+            <a class="left carousel-control" href="#myCarousel" data-slide="prev">
+                <span class="glyphicon glyphicon-chevron-left"></span>
+            </a>
+            <a class="right carousel-control" href="#myCarousel" data-slide="next">
+                <span class="glyphicon glyphicon-chevron-right"></span>
+            </a>
+
+        </div>
+        <script>
+            $('.carousel').carousel({
+                interval: 5000,
+                pause: 'hover',
+                wrap: true
+            });
+        </script>
+
+    <?php } ?>
+
+    <h1> Последние новости </h1>
+
+    <?php if ( isset($data['selected_categ']) && $data['selected_categ'] != '' ) {
+            $categ_arr = [];
+            foreach($data['selected_categ'] as $category) {
+                $categ_arr[] = '<a  href="/home/?categ[]=' . $category['id'] . '" >' . $category["category_name"] . '</a>';
+            }
+            $categ_str = implode( " > " , $categ_arr );
+        ?>
+        <p><?= $categ_str ?></p>
+    <?php } ?>
+
+    <hr>
+
+    <?= $data['module_articles_list'] ?>
+
+</div>
+
+<div class="side_wrap right">
+    <?= $data['module_side_right'] ?>
+</div>

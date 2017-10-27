@@ -1,0 +1,38 @@
+
+<div class="side_wrap left"></div>
+
+<div class="main_content">
+    <h1  class="<?= $data['hide_html_element'] ?>" >Регистрация</h1><br/>
+    <form method="post" action="" class="form-register  <?= $data['hide_html_element'] ?>">
+        <div class="form-group">
+            <label for="login">Логин:</label>
+            <input type="text" id="login" name="login" value="<?= $data['form_data']['login'] ?>" class="form-control" />
+            <?php if ( isset($data['valid_errors']['login']) ) { ?>
+            <div class="form-error"><?= $data['valid_errors']['login'] ?></div>
+            <?php } ?>
+        </div>
+        <div class="form-group">
+            <label for="email">E-mail:</label>
+            <input type="text" id="email" name="email" value="<?= $data['form_data']['email'] ?>" class="form-control"/>
+            <?php if ( isset($data['valid_errors']['email']) ) { ?>
+            <div class="form-error"><?= $data['valid_errors']['email'] ?></div>
+            <?php } ?>
+        </div>
+        <div class="form-group">
+            <label for="password">Пароль:</label>
+            <input type="password" id="password" name="password" value="<?= $data['form_data']['password'] ?>" class="form-control"/>
+            <?php if ( isset($data['valid_errors']['password']) ) { ?>
+            <div class="form-error"><?= $data['valid_errors']['password'] ?></div>
+            <?php } ?>
+        </div>
+        <input type="submit" class="btn btn-default" value="Отправить" />
+    </form>
+
+</div>
+
+<div class="side_wrap right"></div>
+
+
+
+
+

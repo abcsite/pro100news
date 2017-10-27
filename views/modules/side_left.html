@@ -1,0 +1,61 @@
+
+
+
+
+        <div style="text-align: center;padding: 10px; font-size: 21px;"><b>Категории</b></div>
+
+        <ul id="menu" class="nav -navbar-nav" >
+
+            <?php
+                $categories = $data['categories'];
+                $categories_url_base = $data['categories_url_base'];
+            ?>
+             <li>
+                 <div><a href="<?= $categories_url_base ?>" >Все новости</a></div>
+            </li>
+            <?php
+                $categories_count = count($categories);
+                $last_nested_level = 0;
+
+                if ($categories_count > 0) { ?>
+                    <li>
+                        <div><a href="<?= $categories_url_base ?>?categ[]=<?= $categories[0]['id'] ?>"><?= $categories[0]['category_name'] ?></a></div>
+
+                    <?php  for ($i = 1; $i < $categories_count; $i++) { ?>
+
+                        <?php if ( $categories[$i]['nested_level'] == $categories[$i - 1]['nested_level'] ) {  ?>
+                            </li>
+                            <li>
+                                <div><a href="<?= $categories_url_base ?>?categ[]=<?= $categories[$i]['id'] ?>"><?= $categories[$i]['category_name'] ?></a></div>
+                        <?php } ?>
+
+                        <?php if ( $categories[$i]['nested_level'] > $categories[$i - 1]['nested_level'] ) {  ?>
+                            <ul>
+                            <li>
+                                <div><a href="<?= $categories_url_base ?>?categ[]=<?= $categories[$i]['id'] ?>"><?= $categories[$i]['category_name'] ?></a></div>
+                        <?php } ?>
+
+                        <?php if ( $categories[$i]['nested_level'] < $categories[$i - 1]['nested_level'] ) {
+                            $nested_chang =  $categories[$i]['nested_level'] < $categories[$i - 1]['nested_level'] ;
+                             for ($j = 0; $j < $nested_chang; $j++) { ?> </li> </ul>  <?php }  ?>
+                                </li>
+                                <li>
+                                <div><a href="<?= $categories_url_base ?>?categ[]=<?= $categories[$i]['id'] ?>"><?= $categories[$i]['category_name'] ?></a></div>
+                        <?php } ?>
+
+                     <?php } ?>
+
+                     <?php for ($k = 0; $k < $categories[$categories_count - 1]['nested_level']; $k++) { ?> </li> </ul>  <?php }  ?>
+
+                    </li>
+                 <?php } ?>
+
+        </ul>
+
+        <script>
+            $(function () {
+                $("#menu").menu();
+            });
+        </script>
+
+

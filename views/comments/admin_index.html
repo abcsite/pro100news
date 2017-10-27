@@ -1,0 +1,28 @@
+<h1>Комментарии</h1><br/>
+<p><b>Выберите статью для редактирования комментариев в ней:</b></p>
+
+<table class="table table-default" style="width: 100%; background: #fff; ">
+    <td  style="width: 40px;"> <b>ID </b></td>
+    <td  > <b>Статья </b></td>
+    <td  style="width: 100px;"> <b>Непроверенных комментариев </b></td>
+    <td  style="width: 350px;"> <b>Опубликовать/удалить все непроверенные комментарии </b></td>
+
+
+    <?php foreach( $data['articles'] as $article_data) { ?>
+        <tr>
+            <td><b><?= $article_data['id'] ?></b></td>
+            <td><b><a href="/admin/article_page/view/<?= $article_data['id']  ?>" ><?= $article_data['title'] ?> </a></b></td>
+            <td><b> <?= $article_data['comments_count']  ?> </b></td>
+            <td align="left" >
+                <a href="/admin/comments/publish_all_in_article/<?= $article_data['id'] ?>" ><button class="btn btn-sm btn-default">Опубликовать все</button></a>
+                <a href="/admin/comments/delete_not_publish_comm_in_article/<?= $article_data['id'] ?>" onclick="return confirm('Удалить все непроверенные (неопубликованные) комментарии из этой статьи?');"><button class="btn btn-sm btn-default">Удалить все непроверенные</button></a>
+            </td>
+        </tr>
+    <?php } ?>
+</table>
+
+<br/>
+
+
+
+

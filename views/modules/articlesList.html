@@ -1,0 +1,59 @@
+
+    <div class="articles_list__block">
+        <?php if ($data['articles']) {
+
+              foreach( $data['articles'] as $art ) { ?>
+        <div class="article_list__row">
+            <span class="article_list__date" style="font-size: 0.7em; padding-right: 10px;  "><?= my_format_date( $art['art_date'] ) ?> </span>
+            <span class="article_list__title" ><a href="/article_page/view/<?= $art['art_id'] ?>" > <?= $art['art_title'] ?> </a></span>
+        </div>
+        <?php }  } ?>
+    </div>
+
+
+    <hr>
+
+        <b>Страница: <?= $data['pagination']['currentPage'] ?></b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+    <a href="<?= $data['articles_url_base'] ?>?to_page=1&<?= $data['filter']['filter_url'] ?>" ><button class="btn btn-sm btn-default">Первая</button></a>
+
+    <div class="pagin_list_block" style=" display: inline-block; position: relative;  ">
+        <button class="pagin_list_btn btn btn-sm btn-default" style="width: 50px;" >. . .</button>
+
+        <div class="pagin_list_wrap" data_show="" style=" display: none; position:absolute; left: 0px; bottom:100% ; overflow: scroll; max-height: 120px; width: 50px; border: 1px solid #aaa;" >
+            <ul class="pagin_list nav -navbar-nav" >
+                <?php
+                for ( $i = 1 ; $i <= $data['pagination']['pagesCount'] ; $i++ ) { ?>
+                <li><b><a  href="<?= $data['articles_url_base'] ?>?to_page=<?= $i ?>&<?= $data['filter']['filter_url'] ?>" > <?= $i ?> </a></b></li>
+                <?php  } ?>
+            </ul>
+        </div>
+    </div>
+
+    <a href="<?= $data['articles_url_base'] ?>?to_page=<?= $data['pagination']['pagesCount'] ?>&<?= $data['filter']['filter_url'] ?>" ><button class="btn btn-sm btn-default">Последняя (<?= $data['pagination']['pagesCount'] ?>)</button></a>
+
+
+
+<script>
+
+    $(document).ready(function () {
+
+        $(".pagin_list").menu();
+
+        $tab_block = $('.pagin_list_block');
+        $tab = $('.pagin_list_wrap');
+        $tab_btn = $('.pagin_list_btn');
+
+        $tab_block.on('mouseenter', function() {
+            timeId_1 = setTimeout(function () {
+                $tab.show(200);
+            }, 50);
+        })
+        $tab_block.on('mouseleave', function() {
+            timeId_2 = setTimeout(function () {
+                $tab.hide(200);
+            }, 50);
+        })
+    })
+
+</script>

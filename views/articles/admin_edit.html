@@ -1,0 +1,283 @@
+<?php if ( isset($data['article']) ) { ?>
+    <h1>Редактировать статью:</h1>
+    <p><?=$data['article']['id']?> - <?=$data['article']['title']?></p>
+<?php } else { ?>
+    <h1>Добавить статью</h1><br/>
+<?php } ?>
+
+
+<form id="article_form" method="post" action="" enctype="multipart/form-data"   style="width: 900px;">
+    <p>
+        <input type="submit" class="btn btn-success" value="Сохранить"  style="width: 100px;" />&nbsp;
+        <?php if ( isset($data['article']['id']) ) { ?>
+        <a href="/admin/articles/delete/<?= $data['article']['id'] ?>"  class="btn btn-success"  onclick="return confirm('Вы действительно хотите удалить эту статью?');" >Удалить статью</a>&nbsp;
+        <a href="/article_page/view/<?= $data['article']['id'] ?>"  class="btn btn-success" >Просмотреть статью</a>&nbsp;
+        <a href="/admin/articles/edit/"  class="btn btn-success" >Новая статья</a>&nbsp;
+        <?php } ?>
+        <a href="/admin/articles/"  class="btn btn-success" >Список статей</a>&nbsp;
+
+    </p>
+
+    <div id="tabs" style="width: 870px;">
+        <ul>
+            <li><a href="#tabs-1">Основные данные</a></li>
+            <li><a href="#tabs-2">Содержание</a></li>
+            <li><a href="#tabs-3">Теги</a></li>
+            <li><a href="#tabs-4">Категории</a></li>
+        </ul>
+
+        <div id="tabs-1">
+            <input id="article_id" type="hidden" name="id" value="<?= isset($data['article']['id']) ? $data['article']['id'] : '' ?>"/>
+            <input type="hidden" id="date_created" name="date_created" value="<?= isset($data['article']['date_created']) ? $data['article']['date_created'] : ''  ?>"
+                   class="form-control"/>
+            <input type="hidden" id="date_published" name="date_published"
+                   value="<?= isset($data['article']['date_published']) ? $data['article']['date_published'] : ''  ?>"
+                   class="form-control"/>
+            <input type="hidden" id="is_published_old" name="is_published_old"
+                   value="<?= isset($data['article']['is_published']) ? $data['article']['is_published'] : ''  ?>"
+                   class="form-control"/>
+
+            <div class="form-group">
+                <label for="is_published">Опубликовано? </label>
+                <input type="checkbox" id="is_published"
+                       name="is_published" <?php if ( isset($data['article']['is_published']) && $data['article']['is_published'] == 1 ) { ?>
+                checked="checked" <?php } ?> />
+            </div>
+            <div class="form-group">
+                <label for="title">Название</label>
+                <input type="text" id="title" name="title" value="<?= isset($data['article']['title']) ? $data['article']['title'] : ''  ?>" class="form-control"/>
+            </div>
+            <div class="form-group">
+                <label for="description">Описание</label>
+                <textarea  id="description" name="description" class="form-control" rows="3"><?= isset($data['article']['description']) ? $data['article']['description'] : ''   ?></textarea>
+            </div>
+            <div class="form-group">
+                <label for="author">Автор</label>
+                <input type="text" id="author" name="author" value="<?= isset($data['article']['author']) ? $data['article']['author'] : ''  ?>"
+                       class="form-control"/>
+            </div>
+
+        </div>
+
+
+        <div id="tabs-2">
+            <div class="form-group">
+                <label for="text">Для добавления и редактирования изображений воспользуйтесь меню "Insert -> Image -> Upload"</label>
+                <textarea id="text" name="text" class="form-control" rows="15"><?= isset( $data['article']['text']) ?  $data['article']['text'] : '' ?></textarea>
+            </div>
+        </div>
+
+
+        <div id="tabs-3">
+            <div class="form-group">
+                <label for="tags">Теги ( ',' - разделитель тегов ):</label>
+                <textarea id="tags" name="tags" class="form-control"><?= isset( $data['article']['tags']) ?  $data['article']['tags'] : '' ?></textarea>
+            </div>
+        </div>
+
+        <div id="tabs-4">
+
+            <label for="images">Добавьте или удалите категории/подкатегории , в которых будет отображаться статья: </label>
+            <table id="categories" class="table table-default" width="900px">
+
+                <tr  id="category_base" data_parent_id=""  class="category" style="display: none;  "  >
+                    <td class="categ_check" width="40px" style="vertical-align:middle;"> </td>
+                    <td class="categ_id" width="50px" style="vertical-align:middle;"> </td>
+                    <td class="categ_text"  width="410px"  style="vertical-align:middle; "> </td>
+                    <td align="right"  width="400px"  style="vertical-align:middle; ">
+                        <span class="categ_add  btn btn-sm btn-default">добавить категорию</span>
+                        <span class="categ_delete  btn btn-sm btn-default">удалить</span>
+                        <input type="hidden" class="categ_input_hidden" name="" value="" style="display: none;  " />
+                    </td>
+                </tr>
+
+            </table>
+
+        </div>
+
+    </div>
+
+    <script>
+        $( function() {
+            $( "#tabs" ).tabs();
+        } );
+    </script>
+
+</form>
+
+
+
+
+
+<script>
+
+    document.addEventListener("DOMContentLoaded", categoriesGet);
+
+    function categoriesGet() {
+
+        $categories_wrapp = $('#categories');
+        $category_base_element = $('#category_base');
+
+        var article_id = $('#article_id').val();
+
+        var data = {};
+        var uri = '/admin/articles/categories_get_ajax/';
+        if (article_id != '') {
+            uri = uri  + article_id + '/' ;
+        }
+        myAjax(uri, data, categoriesReturn, categoriesReturnErr);
+
+
+        function categoriesReturn(data) {
+
+            if (data) {
+                $('tr[data_base_element="no_base_element"]').remove();
+            }
+
+            var article_data = JSON.parse(data);
+            var categories = article_data['categories'];
+            var article_categories = article_data['article_categories'];
+            var categoriesLength = categories.length;
+
+            for (i = 0; i < categoriesLength; i++) {
+
+                $row = categories[i];
+
+                $categ_clone = $category_base_element.clone();
+
+                $categ_clone.css('display', 'block');
+                $categ_clone.attr('data_base_element', 'no_base_element');
+                $categ_clone.attr('data_categ_id', $row['id']);
+                $categ_clone.attr('data_categ_parent_id', $row['parent_id']);
+                $categ_clone.find('.categ_text').css('padding-left', 50 * $row['nested_level'] + 'px');
+                $categ_clone.find('.categ_id').text($row['id']);
+                $categ_clone.find('.categ_text').text($row['category_name']);
+                $categ_clone.find('.categ_input_hidden').val($row['id']);
+
+                var check = false;
+                for (var j = 0; j < article_categories.length; j++) {
+                    if ( $row['id'] == article_categories[j] ) {
+                        check = true;
+                      break;
+                    }
+                }
+                if ( check) {
+                    $categ_clone.find('.categ_check').html('&#10004;');
+                    $categ_clone.find('.categ_add').css('display', 'none');
+                    $categ_clone.find('.categ_delete').css('display', 'inline-block');
+                    $categ_clone.find('.categ_input_hidden').attr('name', 'categories[]');
+                } else {
+                    $categ_clone.find('.categ_add').css('display', 'inline-block');
+                    $categ_clone.find('.categ_delete').css('display', 'none');
+                }
+
+                $categories_wrapp.append($categ_clone);
+            }
+
+            $('.category .categ_add').on('click', function () {
+                $this_row = $(this).parent().parent();
+                var categ_id = $this_row.attr('data_categ_id');
+
+                var data = {operation : 'add',
+                            article_categories: article_categories,
+                            categories: categories } ;
+
+                if (article_id != '') {
+                    var uri = '/admin/articles/update_categ_ajax/' + categ_id + '/' + article_id + '/';
+                } else {
+                    var uri = '/admin/articles/update_categ_ajax/' + categ_id + '/' ;
+                }
+                myAjax(uri, data, categoriesReturn, categoriesReturnErr);
+            });
+
+            $('.category .categ_delete').on('click', function () {
+                if (confirm('Вы действительно хотите отменить отображение статьи в этой категории и во всех дочерних категориях?')) {
+                    $this_row = $(this).parent().parent();
+                    var categ_id = $this_row.attr('data_categ_id');
+
+                    var data = {
+                        operation: 'delete',
+                        article_categories: article_categories,
+                        categories: categories
+                    };
+                    if (article_id) {
+                        var uri = '/admin/articles/update_categ_ajax/' + categ_id + '/' + article_id + '/';
+                    } else {
+                        var uri = '/admin/articles/update_categ_ajax/' + categ_id + '/';
+                    }
+                    myAjax(uri, data, categoriesReturn, categoriesReturnErr);
+                }
+            });
+
+        }
+
+        function categoriesReturnErr() {
+            alert('Error');
+        }
+
+    }
+</script>
+
+
+<script>
+    /* Настройки для плагина TinyMCE  ( WYSIWYG редактор ) */
+    tinymce.init({
+        selector:'textarea#text',
+        inline: false,
+        mode : "textareas",
+        theme: 'modern',
+        content_css: 'css/tinymce_editor.css',
+        theme_advanced_buttons1 : "undo, redo, |, bold, italic, underline, strikethrough, |, justifyleft, justifycenter, justifyright, justifyfull, styleselect, formatselect, fontselect, fontsizeselect, sub, sup, |, forecolor, backcolor",
+        theme_advanced_buttons2 : "cut, copy, paste, pastetext, pasteword, removeformat, cleanup, |, search, replace, |, bullist, numlist, |, outdent, indent, blockquote, |, link, unlink, image, |, insertdate, inserttime, hr, |, charmap, emotions, iespell",
+        theme_advanced_buttons3 : "tablecontrols, |, visualaid",
+        theme_advanced_buttons4 : "styleprops, |, cite, abbr, acronym, del, ins, |, visualchars, nonbreaking, |, print, preview, |, fullscreen",
+        plugins: [
+            'advlist autolink link autoresize image imagetools lists charmap print preview hr anchor pagebreak spellchecker',
+            'searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking',
+            'save table contextmenu directionality emoticons template paste textcolor'
+        ],
+//        image_list: [
+//            {title: 'My image 1', value: 'http://diplom/webroot/img/articles/4_hyperloop-one-winners-1-218x150.jpeg'},
+//            {title: 'My image 2', value: 'localhost://diplom/webroot/img/articles/61_tesla-model-3-first-ride-002-1020.0.0-218x150.jpg'}
+//                        ],
+//        importcss_append: true,
+        content_style: "img {margin: 10px; } ",
+        paste_data_images: true,
+        image_title: true,
+            images_upload_url: '/admin/articles/tinymce_upload_image_to_article/120/',
+//              images_upload_base_path: '',
+//              images_upload_credentials: true,
+            images_upload_handler: function (blobInfo, success, failure) {
+                var xhr, formData;
+
+                xhr = new XMLHttpRequest();
+                xhr.withCredentials = false;
+                xhr.open('POST', '/admin/articles/tinymce_upload_image_to_article/<?php echo isset($data['article']['id']) ? $data['article']['id'] : '-9' ; ?>/');
+
+                xhr.onload = function() {
+                    var json;
+
+                    if (xhr.status != 200) {
+                        failure('HTTP Error: ' + xhr.status);
+                        return;
+                    }
+
+                    json = JSON.parse(xhr.responseText);
+
+                    if (!json || typeof json.location != 'string') {
+                        failure('Invalid JSON: ' + xhr.responseText);
+                        return;
+                    }
+
+                    success(json.location);
+                };
+
+                formData = new FormData();
+                formData.append('image_tinymce[]', blobInfo.blob(), blobInfo.filename());
+
+                xhr.send(formData);
+            },
+        image_advtab: true
+    });
+</script>
+

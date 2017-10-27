@@ -1,0 +1,24 @@
+<h1>Статьи</h1><br/>
+
+<div>
+    <a href="/admin/articles/edit/"><button class="btn btn-sm btn-success"> Новая статья </button></a>
+</div>
+<br/>
+<p>Код и название статьи:</p>
+<table class="table table-default" style="width: 100%; background: #fff ;">
+    <?php foreach( $data['articles'] as $article_data) { ?>
+        <tr>
+            <td><b><a href="/article_page/view/<?= $article_data['id']  ?>" ><?= $article_data['id']  ?> -- <?= $article_data['title'] ?> </a></b></td>
+            <td align="right" style="width: 200px;">
+                <a href="/admin/articles/edit/<?= $article_data['id'] ?>" ><button class="btn btn-sm btn-default">Редактировать</button></a>
+                <a href="/admin/articles/delete/<?= $article_data['id'] ?>" onclick="return confirmDelete();"><button class="btn btn-sm btn-default">Удалить</button></a>
+            </td>
+        </tr>
+    <?php } ?>
+</table>
+
+<br/>
+
+
+
+
